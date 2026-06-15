@@ -1,6 +1,5 @@
 import streamlit as st
 import numpy as np
-import streamlit as st
 from joblib import model = joblib.load('heart_model.pkl')
 st.set_page_config(
     page_title="Heart Disease Prediction",
