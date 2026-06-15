@@ -1,0 +1,17 @@
+import pickle
+import numpy as np
+
+# Load the pickle payload
+with open("heart_disease_model.pkl", "rb") as file:
+    loaded_tf_model = pickle.load(file)
+
+# Input example structural array representing 13 patient indicators
+# (e.g., [Age, Sex, Chest Pain, RestBP, Chol, FBS, RestECG, MaxHR, ExAngina, Oldpeak, Slope, CA, Thal])
+patient_data = np.array([[-0.5, 1.2, 0.4, -0.1, 0.9, -0.3, 0.5, 1.1, -0.7, 0.2, 0.3, -0.4, 0.8]])
+
+# Run Prediction
+prediction_prob = loaded_tf_model.predict_proba(patient_data)
+prediction_class = loaded_tf_model.predict(patient_data)
+
+print(f"Risk Likelihood Profile: {prediction_prob[0][1] * 100:.2f}%")
+print(f"Target Binary Classification Output: {prediction_class[0]}")
