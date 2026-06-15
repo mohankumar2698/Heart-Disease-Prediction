@@ -1,13 +1,19 @@
 import streamlit as st
 import numpy as np
 from joblib import load
+from pathlib import Path
 
-# Fixed: Added missing quotes around string parameters
-st.set_page_config(page_title="Heart Disease Prediction", layout="centered")
+# 1. Get the directory containing app.py (src/dashboard/)
+current_dir = Path(__file__).parent
 
-# Fixed: Added quotes for file paths
-model = load("models/heart_model.pkl")
-scaler = load("models/scaler.pkl")
+# 2. Point to where your models folder actually is. 
+# Adjust the "../" depending on where your models folder sits relative to app.py
+model_path = current_dir / "../../models/heart_model.pkl" 
+scaler_path = current_dir / "../../models/scaler.pkl"
+
+# 3. Load using the clean absolute path resolution
+model = load(model_path.resolve())
+scaler = load(scaler_path.resolve())
 
 st.title("❤️ Heart Disease Prediction Dashboard")
 
