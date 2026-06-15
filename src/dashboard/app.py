@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
-from joblib import load
-
+import joblib
+model = joblib.load('heart_model.pkl')
 st.set_page_config(
     page_title="Heart Disease Prediction",
     layout="centered"
