@@ -1,17 +1,54 @@
-import pickle
+import streamlit as st
 import numpy as np
+from joblib import load
 
-# Load the pickle payload
-with open("heart_disease_model.pkl", "rb") as file:
-    loaded_tf_model = pickle.load(file)
+st.set_page_config(
+    page_title="Heart Disease Prediction",
+    layout="centered"
+)
 
-# Input example structural array representing 13 patient indicators
-# (e.g., [Age, Sex, Chest Pain, RestBP, Chol, FBS, RestECG, MaxHR, ExAngina, Oldpeak, Slope, CA, Thal])
-patient_data = np.array([[-0.5, 1.2, 0.4, -0.1, 0.9, -0.3, 0.5, 1.1, -0.7, 0.2, 0.3, -0.4, 0.8]])
+model = load("models/heart_model.pkl")
+scaler = load("models/scaler.pkl")
 
-# Run Prediction
-prediction_prob = loaded_tf_model.predict_proba(patient_data)
-prediction_class = loaded_tf_model.predict(patient_data)
+st.title("❤️ Heart Disease Prediction Dashboard")
 
-print(f"Risk Likelihood Profile: {prediction_prob[0][1] * 100:.2f}%")
-print(f"Target Binary Classification Output: {prediction_class[0]}")
+age = st.number_input("Age", 1, 120, 45)
+sex = st.selectbox("Sex", [0,1])
+cp = st.number_input("Chest Pain Type", 0, 3)
+trestbps = st.number_input("Resting Blood Pressure")
+chol = st.number_input("Cholesterol")
+fbs = st.selectbox("Fasting Blood Sugar", [0,1])
+restecg = st.number_input("Rest ECG", 0, 2)
+thalach = st.number_input("Max Heart Rate")
+exang = st.selectbox("Exercise Angina", [0,1])
+
+if st.button("Predict"):
+
+    data = np.array([
+        [
+            age,
+            sex,
+            cp,
+            trestbps,
+            chol,
+            fbs,
+            restecg,
+            thalach,
+            exang
+        ]
+    ])
+
+    data = scaler.transform(data)
+
+    prediction = model.predict(data)
+
+    probability = model.predict_proba(data)[0][1]
+
+    if prediction[0] == 1:
+        st.error(
+            f"High Risk ({probability*100:.2f}%)"
+        )
+    else:
+        st.success(
+            f"Low Risk ({(1-probability)*100:.2f}%)"
+        )
